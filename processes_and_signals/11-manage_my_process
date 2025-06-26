@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+#when run the program will run condition logic e.g 
+#when passes 'start' it will create file contaninng its PID in '/var/run/my_process.pid"
+#if stop deletes teh file `/var/run/my_process.pid`
+#and when passed 'restart"
+#it stops manage_my_process
+#deletes the file `/var/run/my_process.pid`
+#starts manage my process
+#like doing the start functionality again
+
+killer() {
+    kill "$(pgrep -f /manage_my_process)"
+    rm -f /var/run/my_process.pid &
+}
+
+if [[ "$1" == "start" ]]
+then
+    ./manage_my_process &
+    echo "$!" > /var/run/my_process.pid
+    echo "manage_my_process started"
+elif [[ "$1" == "stop" ]]
+then
+    killer; echo "manage_my_process stopped";
+elif [[ "$1" == "restart" ]]
+then
+    killer; ./manage_my_process &
+    echo "$!" > /var/run/my_process.pid
+    echo "manage_my_process restarted"
+else
+    echo "Usage: manage_my_process {start|stop|restart}"
+fi
